@@ -62,9 +62,7 @@ public class PostsActivity extends AppCompatActivity {
     private ArrayList getData() {
         ArrayList posts = new ArrayList<>();
         for(int i=0;i<postImages.length;i++){
-            PostBean post = new PostBean();
-            post.setPostImage(postImages[i]);
-            post.setPostTitle(postTitles[i]);
+            PostBean post = new PostBean(postTitles[i],postImages[i]);
             posts.add(post);
         }
 
