@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 
 import com.tumblr.jumblr.JumblrClient;
 import com.tumblr.jumblr.types.PhotoPost;
@@ -19,6 +22,7 @@ import java.util.Map;
 import tumblr.mimic.com.adapter.PostsDataAdapter;
 import tumblr.mimic.com.bean.PostBean;
 import tumblr.mimic.com.myapplication.R;
+import tumblr.mimic.com.util.DividerUtil;
 
 
 public class PostsActivity extends AppCompatActivity {
@@ -54,32 +58,34 @@ public class PostsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts);
-
-        initView();
+        ArrayList posts = new ArrayList();
+        initView(posts);
 
         TumblrUtil task = new TumblrUtil(this);
         task.execute();
 
     }
 
-    private void initView() {
+    private void initView(ArrayList posts) {
+//        new TumblrUtil(getApplicationContext()).execute();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
-        ArrayList posts = getData();
+        recyclerView.addItemDecoration(new DividerUtil(this,LinearLayoutManager.VERTICAL));
+//        ArrayList posts = getData();
         adapter = new PostsDataAdapter(getApplicationContext(),posts);
         recyclerView.setAdapter(adapter);
     }
 
     private ArrayList getData() {
-        ArrayList posts = new ArrayList<>();
-        for(int i=0;i<postImages.length;i++){
-            PostBean post = new PostBean(postTitles[i],postImages[i]);
-            posts.add(post);
-        }
+//        ArrayList posts = new ArrayList<>();
+//        for(int i=0;i<postImages.length;i++){
+//            PostBean post = new PostBean(postTitles[i],postImages[i]);
+//            posts.add(post);
+//        }
 
-        return posts;
+        return null;
     }
 
     public  void updateAdapter(List<PostBean> postBeanList){
@@ -87,7 +93,7 @@ public class PostsActivity extends AppCompatActivity {
     }
 
 
-    public class TumblrUtil extends AsyncTask<Object, Object, List<PostBean>> {
+    public class TumblrUtil extends AsyncTask<Void, Void, List<PostBean>> {
 
         private Context context;
 
@@ -96,7 +102,7 @@ public class PostsActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<PostBean> doInBackground(Object... params) {
+        protected List<PostBean> doInBackground(Void... params) {
             JumblrClient client = new JumblrClient(
                     "DCx2S5yJ4M4dxZDFWBe5NdXsn0IVxpk8zlwTCv7VuiOYsNCw2D",
                     "6xEA1dbYbO7R9miIr2leJCRc1Xwd5jWV091px1mQDVNPYYYgll"
@@ -115,7 +121,16 @@ public class PostsActivity extends AppCompatActivity {
             List<PostBean> postBeanList = new ArrayList<>();
             for (Post post : posts) {
                 PhotoPost photoPost = (PhotoPost) post;
-                String caption = photoPost.getCaption();
+                Spanned result;
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    result = Html.fromHtml(photoPost.getCaption(),Html.FROM_HTML_MODE_LEGACY);
+                } else {
+                    result = Html.fromHtml(photoPost.getCaption());
+                }
+
+                String caption = result.toString();
+                Log.i("CAPTION",caption);
                 String imageUrl = photoPost.getPhotos().get(0).getOriginalSize().getUrl();
                 PostBean postBean = new PostBean(caption, imageUrl);
                 postBeanList.add(postBean);
@@ -127,7 +142,10 @@ public class PostsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<PostBean> postBean) {
-            PostsActivity.adapter.notifyDataSetChanged();        }
+            initView((ArrayList) postBean);
+
+//            PostsActivity.adapter.notifyDataSetChanged();
+        }
     }
 
 
