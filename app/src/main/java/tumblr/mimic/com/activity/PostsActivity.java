@@ -1,15 +1,25 @@
 package tumblr.mimic.com.activity;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.tumblr.jumblr.JumblrClient;
+import com.tumblr.jumblr.types.PhotoPost;
+import com.tumblr.jumblr.types.Post;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import tumblr.mimic.com.adapter.PostsDataAdapter;
 import tumblr.mimic.com.bean.PostBean;
 import tumblr.mimic.com.myapplication.R;
+
 
 public class PostsActivity extends AppCompatActivity {
 
@@ -38,6 +48,7 @@ public class PostsActivity extends AppCompatActivity {
             "http://api.learn2crack.com/android/images/marshmallow.png"
     };
 
+    public static PostsDataAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +57,8 @@ public class PostsActivity extends AppCompatActivity {
 
         initView();
 
+        TumblrUtil task = new TumblrUtil(this);
+        task.execute();
 
     }
 
@@ -55,7 +68,7 @@ public class PostsActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         ArrayList posts = getData();
-        PostsDataAdapter adapter = new PostsDataAdapter(getApplicationContext(),posts);
+        adapter = new PostsDataAdapter(getApplicationContext(),posts);
         recyclerView.setAdapter(adapter);
     }
 
@@ -68,4 +81,55 @@ public class PostsActivity extends AppCompatActivity {
 
         return posts;
     }
+
+    public  void updateAdapter(List<PostBean> postBeanList){
+        adapter.notifyDataSetChanged();
+    }
+
+
+    public class TumblrUtil extends AsyncTask<Object, Object, List<PostBean>> {
+
+        private Context context;
+
+        public TumblrUtil(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected List<PostBean> doInBackground(Object... params) {
+            JumblrClient client = new JumblrClient(
+                    "DCx2S5yJ4M4dxZDFWBe5NdXsn0IVxpk8zlwTCv7VuiOYsNCw2D",
+                    "6xEA1dbYbO7R9miIr2leJCRc1Xwd5jWV091px1mQDVNPYYYgll"
+            );
+            client.setToken(
+                    "CkY55Vvy4o1NZIV4SqnuKmRvKIW4sr5lvKV3ikfpfgSmy6cFJ6",
+                    "GSmiuP1rPtE0Z5mOe4ZnrpWLdH8TUdxgcQsDe7KkVOxM7vxAoS"
+            );
+
+            // Make the request
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("type", "photo");
+            List<Post> posts = client.userDashboard(param);
+
+
+            List<PostBean> postBeanList = new ArrayList<>();
+            for (Post post : posts) {
+                PhotoPost photoPost = (PhotoPost) post;
+                String caption = photoPost.getCaption();
+                String imageUrl = photoPost.getPhotos().get(0).getOriginalSize().getUrl();
+                PostBean postBean = new PostBean(caption, imageUrl);
+                postBeanList.add(postBean);
+                System.out.println("POST - " + post.getPostUrl());
+            }
+
+            return postBeanList;
+        }
+
+        @Override
+        protected void onPostExecute(List<PostBean> postBean) {
+            PostsActivity.adapter.notifyDataSetChanged();        }
+    }
+
+
+
 }
