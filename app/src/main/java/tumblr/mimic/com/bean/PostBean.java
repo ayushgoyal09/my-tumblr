@@ -8,6 +8,11 @@ public class PostBean {
     String postTitle;
     String postImage;
 
+    public PostBean(String postTitle, String postImage) {
+        this.postTitle = postTitle;
+        this.postImage = postImage;
+    }
+
     public String getPostTitle() {
         return postTitle;
     }
