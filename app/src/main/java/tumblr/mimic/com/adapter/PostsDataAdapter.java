@@ -2,12 +2,14 @@ package tumblr.mimic.com.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -38,7 +40,9 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
     @Override
     public void onBindViewHolder(PostsDataAdapter.ViewHolder viewHolder, int position) {
         viewHolder.postTitle.setText(posts.get(position).getPostTitle());
-        Picasso.with(context).load(posts.get(position).getPostImage()).resize(240,120).into(viewHolder.postImage);
+        Picasso.with(context).load(posts.get(position).getPostImage()).into(viewHolder.postImage);
+        viewHolder.postTitle.setMovementMethod(LinkMovementMethod.getInstance());
+//        Glide.with(context).load(posts.get(position)).asGif().into(viewHolder.postImage);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
         public ViewHolder(View view){
             super(view);
             postTitle = (TextView) view.findViewById(R.id.title);
+            postTitle.setMovementMethod(LinkMovementMethod.getInstance());
             postImage = (ImageView) view.findViewById(R.id.img_android);
 
         }
