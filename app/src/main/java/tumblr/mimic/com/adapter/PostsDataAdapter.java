@@ -56,7 +56,8 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
         Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" + posts.get(position).getId() + ".jpg");
+                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" + posts.get(position).getId() + ".jpg");
+                Log.i("path",file.getAbsolutePath());
                 try {
                     file.createNewFile();
                     FileOutputStream ostream = new FileOutputStream(file);
