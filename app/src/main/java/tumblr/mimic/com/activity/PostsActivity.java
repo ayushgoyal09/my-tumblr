@@ -132,7 +132,8 @@ public class PostsActivity extends AppCompatActivity {
                 String caption = result.toString();
                 Log.i("CAPTION",caption);
                 String imageUrl = photoPost.getPhotos().get(0).getOriginalSize().getUrl();
-                PostBean postBean = new PostBean(caption, imageUrl);
+                long id = photoPost.getId();
+                PostBean postBean = new PostBean(id,caption, imageUrl);
                 postBeanList.add(postBean);
                 System.out.println("POST - " + post.getPostUrl());
             }

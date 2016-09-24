@@ -7,10 +7,20 @@ package tumblr.mimic.com.bean;
 public class PostBean {
     String postTitle;
     String postImage;
+    long id;
 
-    public PostBean(String postTitle, String postImage) {
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public PostBean(long id, String postTitle, String postImage) {
         this.postTitle = postTitle;
         this.postImage = postImage;
+        this.id = id;
     }
 
     public String getPostTitle() {
