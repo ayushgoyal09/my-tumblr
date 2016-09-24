@@ -12,36 +12,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.tumblr.jumblr.types.Post;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import tumblr.mimic.com.bean.PostBean;
+import tumblr.mimic.com.database.SaveToDbTask;
 import tumblr.mimic.com.myapplication.R;
+import tumblr.mimic.com.util.NetworkUtil;
 
 /**
  * Created by Ayush on 9/21/2016.
  */
 
-public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.ViewHolder>{
+public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.ViewHolder> {
 
     private ArrayList<PostBean> posts;
     Context context;
 
-    public PostsDataAdapter(Context context,ArrayList<PostBean> posts) {
+    public PostsDataAdapter(Context context, ArrayList<PostBean> posts) {
         this.posts = posts;
         this.context = context;
-        for(PostBean post : posts){
-            Log.i("id --",post.getId()+"");
+        for (PostBean post : posts) {
+            Log.i("id --", post.getId() + "");
+            Log.i("loc --", post.getPostImage());
         }
     }
 
     @Override
     public PostsDataAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_layout_posts,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_layout_posts, parent, false);
         return new ViewHolder(view);
     }
 
@@ -51,11 +56,11 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
         Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()  + "/"+ posts.get(position).getId() + ".jpg");
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" + posts.get(position).getId() + ".jpg");
                 try {
                     file.createNewFile();
                     FileOutputStream ostream = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,ostream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
                     ostream.close();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -73,14 +78,28 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
 
             }
         };
+        boolean network = NetworkUtil.isNetworkAvailable(context);
+        if (network) {
+            viewHolder.postTitle.setText(posts.get(position).getPostTitle());
+//        Picasso.with(context).load(posts.get(position).getPostImage()).noFade().placeholder(R.drawable.loading).into(viewHolder.postImage);
+            Picasso.with(context).load(posts.get(position).getPostImage()).noFade().placeholder(R.drawable.loading).into(viewHolder.postImage);
+            //save to file
+            Picasso.with(context).load(posts.get(position).getPostImage()).into(target);
 
+            String id = posts.get(position).getId();
+            String caption = posts.get(position).getPostTitle();
 
-        viewHolder.postTitle.setText(posts.get(position).getPostTitle());
-        Log.i("POSTS IMAGE",posts.get(position).getPostImage().toString());
-        Picasso.with(context).load(posts.get(position).getPostImage()).into(target);
-        viewHolder.postTitle.setMovementMethod(LinkMovementMethod.getInstance());
-//        Glide.with(context).load(posts.get(position)).asGif().into(viewHolder.postImage);
+            //store image path and not url to db.
+            String imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" + posts.get(position).getId() + ".jpg";
+            SaveToDbTask task = new SaveToDbTask(context);
+            PostBean post = new PostBean(id, caption, imagePath);
+            task.execute(post);
 
+        } else {
+            viewHolder.postTitle.setText(posts.get(position).getPostTitle());
+            File f = new File(posts.get(position).getPostImage());
+            Picasso.with(context).load(f).into(viewHolder.postImage);
+        }
 
 
     }
@@ -90,11 +109,11 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
         return posts.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView postImage;
         public TextView postTitle;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             super(view);
             postTitle = (TextView) view.findViewById(R.id.title);
             postTitle.setMovementMethod(LinkMovementMethod.getInstance());
