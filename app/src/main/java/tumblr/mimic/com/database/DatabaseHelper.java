@@ -1,4 +1,4 @@
-package tumblr.mimic.com.util;
+package tumblr.mimic.com.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,31 +24,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table "+TABLE_NAME+" (ID INTEGER PRIMARY KEY,LOCATION TEXT, CAPTION TEXT)");
+        db.execSQL("create table " + TABLE_NAME + " (ID STRING PRIMARY KEY,LOCATION TEXT, CAPTION TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
-    public boolean insertData(long id, String location, String caption){
+    public boolean insertData(String id, String location, String caption) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_1,id);
-        contentValues.put(COL_2,location);
-        contentValues.put(COL_3,caption);
-        long result = db.insert(TABLE_NAME,null,contentValues);
-        if (result == -1){
+        contentValues.put(COL_1, id);
+        contentValues.put(COL_2, location);
+        contentValues.put(COL_3, caption);
+        long result = db.insert(TABLE_NAME, null, contentValues);
+        if (result == -1) {
             return false;
-        }else
+        } else
             return true;
     }
 
-    public Cursor checkPrimaryKey(long id){
+    public boolean isPresent(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+TABLE_NAME+" where id = "+ id,null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where id = " + id, null);
+        if(res.getCount()!=0)
+            return true;
+        return false;
+    }
+
+    public Cursor getAllPhotos() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
         return res;
     }
 
