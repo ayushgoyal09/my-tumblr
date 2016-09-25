@@ -3,10 +3,13 @@ package tumblr.mimic.com.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.TextView;
 
@@ -44,16 +47,26 @@ public class PostsActivity extends AppCompatActivity {
         initView(posts);
         TumblrUtil task = new TumblrUtil(this);
         task.execute();
+
+
     }
 
     public void initView(ArrayList posts) {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerUtil(this, LinearLayoutManager.VERTICAL));
         adapter = new PostsDataAdapter(getApplicationContext(), posts);
         recyclerView.setAdapter(adapter);
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.go_to_top);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.smoothScrollToPosition(0);
+            }
+        });
     }
 
     public void updateAdapter(List<PostBean> postBeanList) {
