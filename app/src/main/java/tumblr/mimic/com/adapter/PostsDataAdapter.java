@@ -86,8 +86,8 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
             result = Html.fromHtml(posts.get(position).getPostCaption());
         }
 
-        viewHolder.postTitle.setText(result);
-        viewHolder.postTitle.setMovementMethod(LinkMovementMethod.getInstance());
+        viewHolder.postCaption.setText(result);
+        viewHolder.postCaption.setMovementMethod(LinkMovementMethod.getInstance());
 
         boolean network = NetworkUtil.isNetworkAvailable(context);
 
@@ -120,12 +120,12 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView postImage;
-        public TextView postTitle;
+        public TextView postCaption;
 
         public ViewHolder(View view) {
             super(view);
-            postTitle = (TextView) view.findViewById(R.id.caption);
-            postTitle.setMovementMethod(LinkMovementMethod.getInstance());
+            postCaption = (TextView) view.findViewById(R.id.caption);
+            postCaption.setMovementMethod(LinkMovementMethod.getInstance());
             postImage = (ImageView) view.findViewById(R.id.img_android);
 
         }
