@@ -12,13 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import com.tumblr.jumblr.types.Post;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,7 +55,7 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" + posts.get(position).getId() + ".jpg");
-                Log.i("path",file.getAbsolutePath());
+                Log.i("path", file.getAbsolutePath());
                 try {
                     file.createNewFile();
                     FileOutputStream ostream = new FileOutputStream(file);
@@ -83,9 +81,9 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
         Spanned result;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(posts.get(position).getPostTitle(),Html.FROM_HTML_MODE_LEGACY);
+            result = Html.fromHtml(posts.get(position).getPostCaption(), Html.FROM_HTML_MODE_LEGACY);
         } else {
-            result = Html.fromHtml(posts.get(position).getPostTitle());
+            result = Html.fromHtml(posts.get(position).getPostCaption());
         }
 
         viewHolder.postTitle.setText(result);
@@ -99,7 +97,7 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
             //save image to file
             Picasso.with(context).load(posts.get(position).getPostImage()).into(target);
             String id = posts.get(position).getId();
-            String caption = posts.get(position).getPostTitle();
+            String caption = posts.get(position).getPostCaption();
 
             //store image path to db.
             String imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" + posts.get(position).getId() + ".jpg";
