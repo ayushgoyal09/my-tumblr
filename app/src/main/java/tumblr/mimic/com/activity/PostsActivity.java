@@ -53,13 +53,8 @@ public class PostsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts);
-        Ask.on(this)
-                .forPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withRationales("Location permission need for map to work properly",
-                        "In order to save file you will need to grant storage permission") //optional
-                .go();
-        ArrayList posts = new ArrayList();
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+
         boolean isNetworkAvailable = NetworkUtil.isNetworkAvailable(this);
         if (!isNetworkAvailable) {
             Snackbar snackbar = Snackbar
@@ -69,6 +64,14 @@ public class PostsActivity extends AppCompatActivity {
             textView.setTextColor(Color.YELLOW);
             snackbar.show();
         }
+
+        Ask.on(this)
+                .forPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withRationales("Location permission need for map to work properly",
+                        "In order to save file you will need to grant storage permission") //optional
+                .go();
+        ArrayList posts = new ArrayList();
+
         initView(posts);
         TumblrUtil task = new TumblrUtil(this);
         task.execute();
