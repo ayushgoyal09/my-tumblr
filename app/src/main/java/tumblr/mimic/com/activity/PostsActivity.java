@@ -1,5 +1,6 @@
 package tumblr.mimic.com.activity;
 
+import android.Manifest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -7,11 +8,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import com.vistrav.ask.Ask;
+import com.vistrav.ask.annotations.AskDenied;
+import com.vistrav.ask.annotations.AskGranted;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +33,46 @@ public class PostsActivity extends AppCompatActivity {
     public static PostsDataAdapter adapter;
     private CoordinatorLayout coordinatorLayout;
 
+    private static final String TAG = PostsActivity.class.getSimpleName();
+
+    //optional
+    @AskGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void fileAccessGranted() {
+        Log.i(TAG, "FILE  GRANTED");
+    }
+
+    //optional
+    @AskDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void fileAccessDenied() {
+        Log.i(TAG, "FILE  DENiED");
+    }
+
+    //optional
+    @AskGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
+    public void mapAccessGranted() {
+        Log.i(TAG, "MAP GRANTED");
+    }
+
+    //optional
+    @AskDenied(Manifest.permission.ACCESS_COARSE_LOCATION)
+    public void mapAccessDenied() {
+        Log.i(TAG, "MAP DENIED");
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts);
+        Ask.on(this)
+                .forPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withRationales("Location permission need for map to work properly",
+                        "In order to save file you will need to grant storage permission") //optional
+                .go();
         ArrayList posts = new ArrayList();
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         boolean isNetworkAvailable = NetworkUtil.isNetworkAvailable(this);
-        if(!isNetworkAvailable){
+        if (!isNetworkAvailable) {
             Snackbar snackbar = Snackbar
                     .make(coordinatorLayout, "No internet connection.", Snackbar.LENGTH_LONG);
             View sbView = snackbar.getView();
