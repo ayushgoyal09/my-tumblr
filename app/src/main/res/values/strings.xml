@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">My Tumblr</string>
+    <string name="no_data">No data to display.</string>
 </resources>
