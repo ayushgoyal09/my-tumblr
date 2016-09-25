@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 
@@ -38,6 +37,11 @@ public class TumblrUtil extends AsyncTask<Object, Void, List<PostBean>> {
         List<PostBean> postBeanList = new ArrayList<>();
         boolean networkAvailable = NetworkUtil.isNetworkAvailable(context);
         Log.i("Network status - ",""+networkAvailable);
+
+        /*
+        check if network available,
+        then get from API else get posts from DB.
+         */
         if(networkAvailable){
             JumblrClient client = new JumblrClient(
                     "DCx2S5yJ4M4dxZDFWBe5NdXsn0IVxpk8zlwTCv7VuiOYsNCw2D",
@@ -57,35 +61,18 @@ public class TumblrUtil extends AsyncTask<Object, Void, List<PostBean>> {
 
             for (Post post : posts) {
                 PhotoPost photoPost = (PhotoPost) post;
-                Spanned result;
-
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    result = Html.fromHtml(photoPost.getCaption(), Html.FROM_HTML_MODE_LEGACY);
-                } else {
-                    result = Html.fromHtml(photoPost.getCaption());
-                }
-
-
-
-                String caption = result.toString();
-                final String imageUrl = photoPost.getPhotos().get(0).getOriginalSize().getUrl();
-                final String id = photoPost.getId().toString();
-
-
+                String caption = photoPost.getCaption().toString();
+                String imageUrl = photoPost.getPhotos().get(0).getOriginalSize().getUrl();
+                String id = photoPost.getId().toString();
                 PostBean postBean = new PostBean(id, caption, imageUrl);
                 postBeanList.add(postBean);
-
-                //save to file and db.
-
-
-        }
-
+             }
 
         } else  {
             DatabaseHelper db = new DatabaseHelper(activity);//retrieve from db
             Cursor res = db.getAllPhotos();
             if(res.getCount()==0){
-                //no data
+
             }else{
                 while(res.moveToNext()){
                     String id = res.getString(0);
