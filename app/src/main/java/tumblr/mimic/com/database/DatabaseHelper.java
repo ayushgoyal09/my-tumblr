@@ -49,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean isPresent(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where id = " + id, null);
-        if(res.getCount()!=0)
+        if (res.getCount() != 0)
             return true;
         return false;
     }

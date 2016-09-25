@@ -14,24 +14,22 @@
         android:scrollbars="vertical" />
 
 
-
-
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/go_to_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:id="@+id/go_to_top"
         android:layout_margin="16dp"
         android:src="@drawable/ic_action_top"
         app:layout_anchor="@id/recycler_view"
         app:layout_anchorGravity="bottom|right|end" />
 
     <TextView
-        android:text="@string/no_data"
+        android:id="@+id/no_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:id="@+id/textView2" />
+        android:text="@string/no_data" />
 
 
 </android.support.design.widget.CoordinatorLayout>
