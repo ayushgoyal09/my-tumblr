@@ -47,17 +47,6 @@ public class PostsActivity extends AppCompatActivity {
         Log.i(TAG, "FILE  DENiED");
     }
 
-    //optional
-    @AskGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
-    public void mapAccessGranted() {
-        Log.i(TAG, "MAP GRANTED");
-    }
-
-    //optional
-    @AskDenied(Manifest.permission.ACCESS_COARSE_LOCATION)
-    public void mapAccessDenied() {
-        Log.i(TAG, "MAP DENIED");
-    }
 
 
     @Override
