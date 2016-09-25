@@ -5,7 +5,7 @@ package tumblr.mimic.com.bean;
  */
 
 public class PostBean {
-    String postTitle;
+    String postCaption;
     String postImage;
     String id;
 
@@ -17,18 +17,18 @@ public class PostBean {
         this.id = id;
     }
 
-    public PostBean(String id, String postTitle, String postImage) {
-        this.postTitle = postTitle;
+    public PostBean(String id, String postCaption, String postImage) {
+        this.postCaption = postCaption;
         this.postImage = postImage;
         this.id = id;
     }
 
-    public String getPostTitle() {
-        return postTitle;
+    public String getPostCaption() {
+        return postCaption;
     }
 
-    public void setPostTitle(String postTitle) {
-        this.postTitle = postTitle;
+    public void setPostCaption(String postCaption) {
+        this.postCaption = postCaption;
     }
 
     public String getPostImage() {
