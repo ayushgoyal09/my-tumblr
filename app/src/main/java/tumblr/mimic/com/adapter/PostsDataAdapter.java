@@ -124,7 +124,7 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
 
         public ViewHolder(View view) {
             super(view);
-            postTitle = (TextView) view.findViewById(R.id.title);
+            postTitle = (TextView) view.findViewById(R.id.caption);
             postTitle.setMovementMethod(LinkMovementMethod.getInstance());
             postImage = (ImageView) view.findViewById(R.id.img_android);
 
