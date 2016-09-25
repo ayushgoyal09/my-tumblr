@@ -5,11 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +29,7 @@ import tumblr.mimic.com.database.SaveToDbTask;
 import tumblr.mimic.com.myapplication.R;
 import tumblr.mimic.com.util.NetworkUtil;
 
+
 /**
  * Created by Ayush on 9/21/2016.
  */
@@ -38,10 +42,6 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
     public PostsDataAdapter(Context context, ArrayList<PostBean> posts) {
         this.posts = posts;
         this.context = context;
-        for (PostBean post : posts) {
-            Log.i("id --", post.getId() + "");
-            Log.i("loc --", post.getPostImage());
-        }
     }
 
     @Override
@@ -79,25 +79,35 @@ public class PostsDataAdapter extends RecyclerView.Adapter<PostsDataAdapter.View
 
             }
         };
-        boolean network = NetworkUtil.isNetworkAvailable(context);
-        if (network) {
-            viewHolder.postTitle.setText(posts.get(position).getPostTitle());
-//        Picasso.with(context).load(posts.get(position).getPostImage()).noFade().placeholder(R.drawable.loading).into(viewHolder.postImage);
-            Picasso.with(context).load(posts.get(position).getPostImage()).noFade().placeholder(R.drawable.loading).into(viewHolder.postImage);
-            //save to file
-            Picasso.with(context).load(posts.get(position).getPostImage()).into(target);
 
+        Spanned result;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(posts.get(position).getPostTitle(),Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(posts.get(position).getPostTitle());
+        }
+
+        viewHolder.postTitle.setText(result);
+        viewHolder.postTitle.setMovementMethod(LinkMovementMethod.getInstance());
+
+        boolean network = NetworkUtil.isNetworkAvailable(context);
+
+        if (network) {
+
+            Picasso.with(context).load(posts.get(position).getPostImage()).noFade().placeholder(R.drawable.loading).into(viewHolder.postImage);
+            //save image to file
+            Picasso.with(context).load(posts.get(position).getPostImage()).into(target);
             String id = posts.get(position).getId();
             String caption = posts.get(position).getPostTitle();
 
-            //store image path and not url to db.
+            //store image path to db.
             String imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" + posts.get(position).getId() + ".jpg";
             SaveToDbTask task = new SaveToDbTask(context);
             PostBean post = new PostBean(id, caption, imagePath);
             task.execute(post);
 
         } else {
-            viewHolder.postTitle.setText(posts.get(position).getPostTitle());
             File f = new File(posts.get(position).getPostImage());
             Picasso.with(context).load(f).into(viewHolder.postImage);
         }
