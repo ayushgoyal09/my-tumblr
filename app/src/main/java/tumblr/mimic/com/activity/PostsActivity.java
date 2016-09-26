@@ -1,11 +1,14 @@
 package tumblr.mimic.com.activity;
 
 import android.Manifest;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.net.ConnectivityManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +27,7 @@ import tumblr.mimic.com.adapter.PostsDataAdapter;
 import tumblr.mimic.com.bean.PostBean;
 import tumblr.mimic.com.myapplication.R;
 import tumblr.mimic.com.util.DividerUtil;
+import tumblr.mimic.com.util.NetworkReceiver;
 import tumblr.mimic.com.util.NetworkUtil;
 import tumblr.mimic.com.util.TumblrUtil;
 
@@ -31,7 +35,7 @@ import tumblr.mimic.com.util.TumblrUtil;
 public class PostsActivity extends AppCompatActivity {
 
     public static PostsDataAdapter adapter;
-    private CoordinatorLayout coordinatorLayout;
+    private static CoordinatorLayout coordinatorLayout;
 
     private static final String TAG = PostsActivity.class.getSimpleName();
 
@@ -57,12 +61,7 @@ public class PostsActivity extends AppCompatActivity {
 
         boolean isNetworkAvailable = NetworkUtil.isNetworkAvailable(this);
         if (!isNetworkAvailable) {
-            Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, "No internet connection.", Snackbar.LENGTH_LONG);
-            View sbView = snackbar.getView();
-            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.YELLOW);
-            snackbar.show();
+            showSnackBar();
         }
 
         Ask.on(this)
@@ -77,6 +76,15 @@ public class PostsActivity extends AppCompatActivity {
         task.execute();
 
 
+    }
+
+    public static void showSnackBar() {
+        Snackbar snackbar = Snackbar
+                .make(coordinatorLayout, "No internet connection.", Snackbar.LENGTH_LONG);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
+        snackbar.show();
     }
 
     public void initView(ArrayList posts) {
