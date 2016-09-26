@@ -66,7 +66,7 @@ public class PostsActivity extends AppCompatActivity {
 
         Ask.on(this)
                 .forPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withRationales("Location permission need for map to work properly",
+                .withRationales("Storage permission required",
                         "In order to save file you will need to grant storage permission") //optional
                 .go();
         ArrayList posts = new ArrayList();
