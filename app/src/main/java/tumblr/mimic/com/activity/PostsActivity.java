@@ -93,6 +93,11 @@ public class PostsActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerUtil(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
         adapter = new PostsDataAdapter(getApplicationContext(), posts);
         recyclerView.setAdapter(adapter);
 
